@@ -1,0 +1,54 @@
+{
+  "name": "tc_playwrite",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:debug": "npx playwright test -c configs/playwright.config.debug.ts",
+    "test:stab": "npx playwright test -c configs/playwright.config.debugMetrics.ts",
+    "test:regression": "npx playwright test -c configs/playwright.config.regression.ts",
+    "format": "prettier --write \"*.{js,md}\" \"src/controllers/dataBaseController.ts\"",
+    "lint": "tsc --noEmit && eslint . --ext .js,.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@playwright/test": "^1.48.1",
+    "@types/node": "^22.7.7",
+    "allure-commandline": "^2.32.0",
+    "allure-playwright": "^3.0.6",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.11.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3",
+    "typescript-eslint": "^8.10.0"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "playwright": "^1.48.1",
+    "playwright-core": "^1.48.1",
+    "undici-types": "^6.19.8"
+  },
+  "optionalDependencies": {
+    "fsevents": "^2.3.2"
+  },
+  "description": "",
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

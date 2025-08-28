@@ -1,0 +1,57 @@
+parameters:
+  - name: testCommand
+    type: string
+    default: 'test:regression'
+    values:
+      - test:regression
+      - test:stab
+  - name: baseUrl
+    type: string
+    default: 'https://automationexercise.com'
+
+trigger:
+  - main
+
+pool:
+   vmImage: ubuntu-latest
+
+variables:
+  testCommand: ${{ parameters.testCommand }}
+  baseUrl: ${{ parameters.baseUrl }}
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18'
+    displayName: 'Install Node.js'
+  - script: npm ci
+    displayName: 'npm ci'
+  - script: npx playwright install
+    displayName: 'Install Playwright browsers'
+  - script: npm run $(testCommand)
+    displayName: 'Run Playwright tests'
+    env:
+      CI: 'true'
+      BASE_URL: $(baseUrl)
+  - script: ls -la test-results/ || echo "test-results folder not found"
+    displayName: 'Check test results folder'
+    condition: succeededOrFailed()
+  - script: ls -la playwright-report/ || echo "playwright-report folder not found"
+    displayName: 'Check playwright-report folder'
+    condition: succeededOrFailed()
+  - task: PublishTestResults@2
+    displayName: 'Publish test results'
+    inputs:
+      searchFolder: 'test-results'
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'e2e-junit-results.xml'
+      mergeTestResults: true
+      failTaskOnFailedTests: true
+      testRunTitle: 'My End-To-End Tests'
+    condition: succeededOrFailed()
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: 'playwright-report'
+      artifact: 'playwright-report'
+      publishLocation: 'pipeline'
+    condition: succeededOrFailed()
